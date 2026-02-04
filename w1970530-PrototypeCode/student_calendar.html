@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Calendar | VLE.STUDENT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --side: #1e293b;
+            --accent: #3b82f6;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Consistency */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: var(--side);
+            padding: 2rem 1rem;
+            position: fixed;
+            left: 0; top: 0;
+            box-sizing: border-box;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sidebar h2 { color: var(--accent); padding-left: 12px; margin-bottom: 2rem; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+        
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px;
+            display: block;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .nav-link.active { background: rgba(59, 130, 246, 0.1); color: var(--accent); }
+
+        /* Main Content & Top Nav */
+        .main-content {
+            margin-left: 260px;
+            padding: 3rem;
+            width: calc(100% - 260px);
+            box-sizing: border-box;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-tabs { display: flex; gap: 2rem; }
+        .tab-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .tab-link.active-tab { color: var(--accent); }
+        .tab-link.active-tab::after {
+            content: '';
+            position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent);
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Calendar Styling */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 1rem; }
+        .day-header { text-align: center; font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; padding-bottom: 10px; }
+        
+        .day-cell {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .day-cell:hover:not(.empty) { border-color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+        .day-cell.today { border: 2px solid var(--accent); }
+        .day-cell.empty { background: transparent; border: none; cursor: default; }
+
+        .event-tag {
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            margin-top: 4px;
+            color: white;
+            display: block;
+        }
+        .tag-official { background: var(--accent); }
+        .tag-deadline { background: #ef4444; }
+        .tag-personal { background: #10b981; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>VLE.STUDENT</h2>
+        <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="student.html" class="nav-link">🏠 My Dashboard</a>
+            <a href="student_modules.html" class="nav-link">📚 Course Materials</a>
+            <a href="student_grades.html" class="nav-link">📊 My Grades</a>
+            <div style="margin-top: auto; padding-top: 5rem;">
+                <a href="/" class="nav-link" style="color: #ef4444;">🚪 Logout</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="top-nav">
+            <div class="nav-tabs">
+                <a href="student_modules.html" class="tab-link">My Modules</a>
+                <a href="student_calendar.html" class="tab-link active-tab">Calendar</a>
+                <a href="student_grades.html" class="tab-link">Grades</a>
+                <a href="student_contact.html" class="tab-link">Contact Tutor</a>
+            </div>
+            <button style="background: var(--accent); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">Add Event</button>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="left-col">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <button onclick="changeMonth(-1)" style="background:transparent; border:none; color:white; cursor:pointer;">❮</button>
+                        <h3 id="monthDisplay" style="margin:0; color:var(--accent);">February 2026</h3>
+                        <button onclick="changeMonth(1)" style="background:transparent; border:none; color:white; cursor:pointer;">❯</button>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendarGrid">
+                        </div>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-top:0;">Upcoming Deadlines</h4>
+                    <div style="display:flex; gap:10px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <div style="width:4px; background:#ef4444; border-radius:2px;"></div>
+                        <div>
+                            <div style="font-size:0.85rem; font-weight:700;">CW1: Market Analysis</div>
+                            <small style="color:#94a3b8;">Feb 15, 2026 • 23:59</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 style="margin-top:0;">My Reminders</h4>
+                    <p style="font-size: 0.8rem; color:#94a3b8;">Click a date on the calendar to add a custom study reminder.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="eventModal">
+        <div class="card" style="width: 350px;">
+            <h3 style="margin-top:0;">Add Reminder</h3>
+            <input type="text" id="eventTitle" placeholder="e.g. Study Group" style="width:100%; padding:12px; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:white; border-radius:10px; margin-bottom:15px; outline:none;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="saveEvent()" style="flex:1; background:var(--accent); color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;">Save</button>
+                <button onclick="closeModal()" style="flex:1; background:#334155; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentViewDate = new Date(2026, 1, 1);
+        let selectedDay = null;
+        let personalEvents = JSON.parse(localStorage.getItem('vle_calendar')) || {};
+
+        const officialEvents = {
+            "2026-1-1": [{title: "Lecture: W1", class: "tag-official"}],
+            "2026-1-15": [{title: "CW1 DEADLINE", class: "tag-deadline"}]
+        };
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const display = document.getElementById('monthDisplay');
+            grid.innerHTML = '';
+
+            const year = currentViewDate.getFullYear();
+            const month = currentViewDate.getMonth();
+            display.innerText = currentViewDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            days.forEach(d => grid.innerHTML += `<div class="day-header">${d}</div>`);
+
+            let firstDay = new Date(year, month, 1).getDay();
+            firstDay = (firstDay === 0) ? 6 : firstDay - 1; 
+
+            for(let x=0; x<firstDay; x++) grid.innerHTML += `<div class="day-cell empty"></div>`;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for(let i=1; i<=daysInMonth; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.innerHTML = `<span style="font-size:0.8rem; font-weight:700;">${i}</span>`;
+                
+                const key = `${year}-${month}-${i}`;
+                if(officialEvents[key]) {
+                    officialEvents[key].forEach(e => cell.innerHTML += `<div class="event-tag ${e.class}">${e.title}</div>`);
+                }
+                if(personalEvents[key]) {
+                    personalEvents[key].forEach(e => cell.innerHTML += `<div class="event-tag tag-personal">📝 ${e}</div>`);
+                }
+
+                cell.onclick = () => openModal(i);
+                grid.appendChild(cell);
+            }
+        }
+
+        function changeMonth(s) { currentViewDate.setMonth(currentViewDate.getMonth() + s); renderCalendar(); }
+        function openModal(d) { selectedDay = d; document.getElementById('eventModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
+        function saveEvent() {
+            const t = document.getElementById('eventTitle').value;
+            if(!t) return;
+            const key = `${currentViewDate.getFullYear()}-${currentViewDate.getMonth()}-${selectedDay}`;
+            if(!personalEvents[key]) personalEvents[key] = [];
+            personalEvents[key].push(t);
+            localStorage.setItem('vle_calendar', JSON.stringify(personalEvents));
+            closeModal(); renderCalendar();
+        }
+
+        window.onload = renderCalendar;
+    </script>
+</body>
+</html>

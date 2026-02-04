@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Performance | VLE.STUDENT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --side: #1e293b;
+            --accent: #3b82f6;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar with unified VLE.STUDENT font */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: var(--side);
+            padding: 2rem 1rem;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-sizing: border-box;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sidebar h2 { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--accent); 
+            padding-left: 12px; 
+            margin-bottom: 2rem; 
+            font-size: 1.5rem; 
+            font-weight: 800; /* Matching the weight of your dashboard logo */
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 12px;
+            display: block;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .nav-link.active { background: rgba(59, 130, 246, 0.1); color: var(--accent); }
+
+        /* Main Content & Top Nav */
+        .main-content {
+            margin-left: 260px;
+            padding: 3rem;
+            width: calc(100% - 260px);
+            box-sizing: border-box;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-tabs { display: flex; gap: 2rem; }
+        .tab-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .tab-link.active-tab { color: var(--accent); }
+        .tab-link.active-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        /* Layout Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Grade Rows */
+        .grade-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 1.2rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            align-items: center;
+        }
+
+        .grade-mark { font-weight: 800; color: #10b981; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>VLE.STUDENT</h2>
+        <a href="student.html" class="nav-link">🏠 My Dashboard</a>
+        <a href="student_modules.html" class="nav-link">📚 Course Materials</a>
+        <a href="student_grades.html" class="nav-link active">📊 My Grades</a>
+        <div style="margin-top: auto; position: absolute; bottom: 2rem; width: calc(100% - 2rem);">
+            <a href="/" class="nav-link" style="color: #ef4444;">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-nav">
+            <div class="nav-tabs">
+                <a href="student_modules.html" class="tab-link">My Modules</a>
+                <a href="student_calendar.html" class="tab-link">Calendar</a>
+                <a href="student_grades.html" class="tab-link active-tab">Grades</a>
+                <a href="student_contact.html" class="tab-link">Contact Tutor</a>
+            </div>
+            <button style="background: var(--accent); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;">Download Transcript</button>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="left-col">
+                <div class="card">
+                    <h3 style="margin-top:0; color:var(--accent);">Academic Performance</h3>
+                    <div class="grade-item">
+                        <span style="font-weight:600;">Digital Strategy (6BUIS019W)</span>
+                        <span style="color:#94a3b8;">Avg: 82%</span>
+                        <span class="grade-mark">1st</span>
+                    </div>
+                    <div class="grade-item">
+                        <span style="font-weight:600;">Applied AI (6COSC020W)</span>
+                        <span style="color:#94a3b8;">Avg: 68%</span>
+                        <span class="grade-mark" style="color:#f59e0b;">2:1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <div class="card" style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2);">
+                    <h4 style="margin:0; color:var(--accent);">Summary Statistics</h4>
+                    <div style="margin-top: 1.5rem;">
+                        <p style="color:#94a3b8; font-size: 0.8rem; margin:0;">Credits Earned</p>
+                        <h3 style="margin: 5px 0 0; font-size: 1.8rem;">45 / 120</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | VLE.OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1120;
+            --side: #0f172a;
+            --accent: #3b82f6;
+            --text: #f8fafc;
+            --card: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Side Branding Section */
+        .brand-panel {
+            flex: 1.2;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5rem;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand-panel h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--accent);
+            letter-spacing: -2px;
+        }
+
+        .student-note {
+            margin-top: 3rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            max-width: 450px;
+        }
+
+        .student-note h4 { margin: 0 0 10px 0; color: var(--accent); font-size: 1rem; }
+        .student-note p { margin: 0; color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+
+        /* Login Section */
+        .login-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            padding: 2rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Developer Note Table */
+        .dev-note {
+            margin-top: 2rem;
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: rgba(59, 130, 246, 0.2); }
+            50% { border-color: rgba(59, 130, 246, 0.6); }
+            100% { border-color: rgba(59, 130, 246, 0.2); }
+        }
+
+        .dev-note table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .dev-note th { text-align: left; color: var(--accent); padding-bottom: 5px; }
+        .dev-note td { padding: 4px 0; font-family: monospace; }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: #94a3b8; }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand-panel">
+        <h1>VLE.OS</h1>
+        <div class="student-note">
+            <h4>👋 Welcome to the Portal</h4>
+            <p>Access your centralized learning environment. Please refer to the <b>Developer Notes</b> on the login card for authorized testing credentials.</p>
+        </div>
+    </div>
+
+    <div class="login-panel">
+        <div class="login-card">
+            <h2 style="margin:0 0 0.5rem 0;">Sign In</h2>
+            <p style="color: #3b82f6; font-size: 0.85rem; font-weight: 700; margin-bottom: 2rem;">👇 PLEASE READ DEVELOPER NOTES BELOW</p>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="Check notes for email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Check notes for pass" required>
+                </div>
+
+                <button type="submit" class="btn-signin">Sign In</button>
+            </form>
+
+            <div class="dev-note" id="devNote">
+                <strong style="color: white;">🛠️ DEVELOPER NOTES (Authorized Access)</strong>
+                <table>
+                    <tr>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Pass</th>
+                    </tr>
+                    <tr>
+                        <td>Teacher</td>
+                        <td>teacher@vle.ac.uk</td>
+                        <td>123</td>
+                    </tr>
+                    <tr>
+                        <td>Student</td>
+                        <td>student@vle.ac.uk</td>
+                        <td>123</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value.toLowerCase();
+            const pass = document.getElementById('password').value;
+
+            if (pass === "123") {
+                if (email === "teacher@vle.ac.uk") {
+                    window.location.href = 'teacher.html';
+                } else if (email === "student@vle.ac.uk") {
+                    window.location.href = 'student.html';
+                } else {
+                    alert("Invalid email. Please use the credentials in the Developer Notes below.");
+                }
+            } else {
+                alert("Incorrect password. Please use '123' as stated in the Developer Notes.");
+            }
+        }
+    </script>
+</body>
+</html>

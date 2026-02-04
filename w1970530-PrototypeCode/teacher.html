@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Command Center | VLE.TEACHER</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Top Sub-navigation styling restored */
+        .vle-tabs {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        .tab-item {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        /* Active state for the horizontal nav */
+        .tab-item.active {
+            color: #3b82f6;
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #3b82f6;
+        }
+        /* Notification Badges */
+        .badge {
+            background: #6366f1;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 6px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 style="color: #3b82f6; margin-bottom: 2rem; letter-spacing: -1px; font-weight: 800; padding-left: 1.5rem;">VLE.ADMIN</h2>
+        <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="teacher.html" class="nav-link active">📊 Command Center</a>
+            <a href="module.html" class="nav-link">📚 My Modules</a>
+            <a href="/" class="nav-link" style="margin-top: auto; color: #ef4444; padding-left: 1.5rem;">Logout</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="vle-tabs">
+            <a href="module.html" class="tab-item">Content</a>
+            <a href="calendar.html" class="tab-item">Calendar</a>
+            <a href="announcements.html" class="tab-item">Announcements <span class="badge">24</span></a>
+            <a href="gradebook.html" class="tab-item">Gradebook</a>
+            <a href="messages.html" class="tab-item">Messages <span class="badge">6</span></a>
+        </div>
+        
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem;">
+            <div>
+                <h1 style="margin:0;">Faculty Hub</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">2026 Academic Session | Real-time Management</p>
+            </div>
+            <div id="sync-status" style="display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></span>
+                <span id="status-text" style="color: #10b981; font-size: 0.85rem; font-weight: 600;">System Live & Synced</span>
+            </div>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="card">
+                <h3 style="margin-top: 0;">Class Grade Distribution</h3>
+                <canvas id="gradeChart" style="max-height: 180px;"></canvas>
+            </div>
+            <div class="card" style="border-left: 4px solid #ef4444; border-radius: 20px;">
+                <h3 style="color: #ef4444; margin-top: 0;">⚠️ Global At-Risk Alerts</h3>
+                <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 12px;">
+                        <span><strong>Charlie Davis</strong> (Applied AI)</span>
+                        <button class="btn-premium" style="width: auto; padding: 5px 10px; font-size: 0.7rem; background: #ef4444; border: none; color: white; border-radius: 5px; cursor: pointer;">Manage</button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: 12px;">
+                        <span><strong>Bob Smith</strong> (Cyber Security)</span>
+                        <button class="btn-premium" style="width: auto; padding: 5px 10px; font-size: 0.7rem; background: #ef4444; border: none; color: white; border-radius: 5px; cursor: pointer;">Manage</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem; border-radius: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3>Quick Access Modules</h3>
+                <button class="btn-premium" style="width: auto; padding: 8px 15px; background: #3b82f6; color: white; border: none; border-radius: 10px;" onclick="window.location.href='module.html'">View All Modules</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div class="card" onclick="window.location.href='module.html'" style="margin:0; cursor:pointer; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding: 25px;">
+                    <strong>6BUIS019W</strong>
+                    <p style="font-size:0.75rem; color:var(--text-muted);">Digital Strategy</p>
+                </div>
+                <div class="card" onclick="window.location.href='module.html'" style="margin:0; cursor:pointer; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding: 25px;">
+                    <strong>6COSC019W</strong>
+                    <p style="font-size:0.75rem; color:var(--text-muted);">Cyber Security</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3>Interactive Faculty Timetable</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">Click any slot to edit. Changes broadcast to students immediately.</p>
+            <div style="display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 10px; text-align: center;">
+                <div></div>
+                <div style="font-weight: 600; color: var(--accent);">MON</div>
+                <div style="font-weight: 600; color: var(--accent);">TUE</div>
+                <div style="font-weight: 600; color: var(--accent);">WED</div>
+                <div style="font-weight: 600; color: var(--accent);">THU</div>
+                <div style="font-weight: 600; color: var(--accent);">FRI</div>
+                <script>
+                    const timetableSlots = ["09:00", "11:00", "13:00"];
+                    const schedule = { "09:00-MON": "6BUIS019W", "11:00-TUE": "6COSC019W", "13:00-WED": "6BUIS019W", "09:00-FRI": "6COSC019W" };
+                    timetableSlots.forEach(t => {
+                        document.write(`<div style="color: var(--text-muted); font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">${t}</div>`);
+                        ["MON", "TUE", "WED", "THU", "FRI"].forEach(d => {
+                            const key = `${t}-${d}`;
+                            const val = schedule[key] || "";
+                            document.write(`
+                                <div class="card" style="margin:0; padding:8px; min-height:50px; background:${val?'rgba(59,130,246,0.1)':'rgba(255,255,255,0.01)'}; border:1px solid ${val?'rgba(59,130,246,0.3)':'rgba(255,255,255,0.05)'};">
+                                    <input type="text" value="${val}" onchange="notifyChange('${val}', '${d}', '${t}')" placeholder="---" style="background:transparent; border:none; color:white; font-weight:bold; width:100%; text-align:center; font-size:0.8rem;">
+                                </div>
+                            `);
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="card">
+                <h3>Syllabus Progress Overview</h3>
+                <div style="margin-top: 15px;">
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span>Digital Strategy</span>
+                            <span>85%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                            <div style="width: 85%; height: 100%; background: var(--accent);"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span>Cyber Security</span>
+                            <span>40%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                            <div style="width: 40%; height: 100%; background: #10b981;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Faculty Scratchpad</h3>
+                <textarea id="facultyNotes" placeholder="Quick lesson notes or reminders..." 
+                    style="width: 100%; height: 80px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 12px; font-family: inherit; margin-top: 10px; resize: none;"></textarea>
+                <button class="btn-premium" style="margin-top: 10px; width: auto; font-size: 0.8rem; padding: 8px;" onclick="saveNotes()">💾 Save Notes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function notifyChange(mod, day, time) {
+            const txt = document.getElementById('status-text');
+            const box = document.getElementById('sync-status');
+            txt.innerHTML = `🔔 BROADCAST SENT: ${mod} (${day} @ ${time})`;
+            box.style.borderColor = "#3b82f6";
+            setTimeout(() => { 
+                txt.innerHTML = "System Live & Synced"; 
+                box.style.borderColor = "rgba(16, 185, 129, 0.2)";
+            }, 4000);
+        }
+
+        function saveNotes() {
+            localStorage.setItem('vle_notes', document.getElementById('facultyNotes').value);
+            alert("Notes saved locally.");
+        }
+
+        window.onload = function() {
+            const savedNotes = localStorage.getItem('vle_notes');
+            if(savedNotes) document.getElementById('facultyNotes').value = savedNotes;
+
+            const ctx = document.getElementById('gradeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: { 
+                    labels: ['A', 'B', 'C', 'D', 'F'], 
+                    datasets: [{ 
+                        data: [18, 25, 12, 4, 1], 
+                        backgroundColor: '#3b82f6', 
+                        borderRadius: 8
+                    }] 
+                },
+                options: { 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        y: { display: false }, 
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } } 
+                    } 
+                }
+            });
+        };
+    </script>
+</body>
+</html>
