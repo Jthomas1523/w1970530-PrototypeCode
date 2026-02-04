@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Management | VLE.TEACHER</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .vle-tabs { display: flex; gap: 30px; margin-bottom: 2.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 10px; }
+        .tab-item { color: var(--text-muted); text-decoration: none; font-weight: 600; position: relative; cursor: pointer; font-size: 1.1rem; }
+        .tab-item.active { color: #3b82f6; }
+        .tab-item.active::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 2px; background: #3b82f6; }
+        .badge { background: #6366f1; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; margin-left: 6px; font-weight: 700; }
+        .roster-container { max-height: 0; overflow: hidden; transition: all 0.5s ease; background: rgba(15, 23, 42, 0.5); border-radius: 15px; opacity: 0; }
+        .roster-container.expanded { max-height: 2000px; opacity: 1; margin-top: 20px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .student-item { background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 10px; transition: 0.3s; }
+        .student-item.flagged-highlight { background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; }
+        .flagged-text { color: #ef4444 !important; font-weight: 800 !important; }
+        .student-header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .profile-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(0, 0, 0, 0.2); padding: 0 20px; }
+        .profile-content.open { max-height: 400px; padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .portfolio-card.active { border: 2px solid var(--accent); background: rgba(59, 130, 246, 0.1); }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+    <h2 style="color: #ffffff; margin-bottom: 2rem; letter-spacing: -1px; font-weight: 800; padding-left: 1.5rem;">VLE.ADMIN</h2>
+    <nav style="display: flex; flex-direction: column; gap: 8px;">
+        <a href="teacher.html" class="nav-link">📊 Command Center</a>
+        <a href="module.html" class="nav-link">📚 My Modules</a>
+        <a href="/" class="nav-link" style="margin-top: auto; color: #ef4444; padding-left: 1.5rem;">Logout</a>
+    </nav>
+</div>
+
+    <div class="main-content">
+        <div class="vle-tabs">
+            <a href="module.html" class="tab-item active">Content</a>
+            <a href="calendar.html" class="tab-item">Calendar</a>
+            <a href="announcements.html" class="tab-item">Announcements <span class="badge">24</span></a>
+            <a href="gradebook.html" class="tab-item">Gradebook</a>
+            <a href="messages.html" class="tab-item">Messages <span class="badge">6</span></a>
+        </div>
+
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h1>Teaching Portfolio</h1>
+            <button class="btn-premium" style="width: auto;" onclick="createNewModule()">+ Create New Module</button>
+        </header>
+
+        <div id="portfolioGrid" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 2rem;"></div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 id="displayModuleName">Select a Module</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-premium" style="width: auto; padding: 10px 20px;" onclick="toggleRoster()">👥 Toggle Roster</button>
+                            <button class="btn-premium" style="width: auto; padding: 10px 20px;" onclick="document.getElementById('resourceUpload').click()">+ Add Resource</button>
+                            <input type="file" id="resourceUpload" hidden onchange="handleLocalUpload(this, 'materialsContainer', '📄')">
+                        </div>
+                    </div>
+
+                    <div id="rosterPanel" class="roster-container">
+                        <input type="text" id="rosterSearch" placeholder="🔍 Search students..." onkeyup="filterRoster()" style="width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                        <div id="rosterGrid"></div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h3>Learning Resources</h3>
+                        <div id="materialsContainer">
+                            <div class="card" style="margin-bottom: 10px; padding: 12px; display: flex; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                                <span>📄 Week 1 Lecture Slides.pdf</span>
+                                <button class="btn-delete" onclick="safeRemove(this)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3>Assessments</h3>
+                            <button class="btn-premium" style="width: auto; padding: 6px 12px; font-size: 0.8rem; background: #6366f1;" onclick="document.getElementById('assessmentUpload').click()">+ New Link</button>
+                            <input type="file" id="assessmentUpload" hidden onchange="handleLocalUpload(this, 'assessmentContainer', '📝')">
+                        </div>
+                        <div id="assessmentContainer">
+                            <div class="card" style="margin-bottom: 10px; padding: 12px; display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                                <span>📝 Coursework Submission Link</span>
+                                <button class="btn-delete" onclick="safeRemove(this)">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="border-left: 4px solid #ef4444; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <h3 style="color: #ef4444; margin: 0;">⚠️ At-Risk Students</h3>
+                        <button id="bulkMessageBtn" class="btn-premium" style="width: auto; padding: 4px 10px; font-size: 0.7rem; background: #6366f1;" onclick="bulkMessage()">✉ Bulk Notify</button>
+                    </div>
+                    <div id="atRiskList" style="font-size: 0.85rem; color: #94a3b8;">No flags yet.</div>
+                </div>
+                <div class="card">
+                    <h3>Module Stats</h3>
+                    <p>Attendance: <span id="avgAtt" style="color: #10b981; font-weight: bold;">--</span></p>
+                    <p>Flagged: <span id="flagCount" style="color: #ef4444; font-weight: bold;">0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let modules = [
+            { id: '6BUIS019W', name: 'Digital Strategy', color: '#facc15' },
+            { id: '6COSC019W', name: 'Cyber Security', color: '#f472b6' },
+            { id: '6COSC020W', name: 'Applied AI', color: '#3b82f6' }
+        ];
+
+        const studentNames = ["Alice Thompson", "Ben Richards", "Chloe Evans", "Daniel Wu", "Elena Gomez", "Faisal Khan"];
+        let currentModuleIndex = 0;
+        
+        let rosters = modules.map(() => studentNames.map((name, i) => ({
+            name, 
+            id: 'W' + (1700000 + i), 
+            attendance: name === "Alice Thompson" ? 45 : Math.floor(65 + Math.random() * 35), 
+            manualFlag: false,
+            manualOverride: false 
+        })));
+
+        function renderPortfolio() {
+            const grid = document.getElementById('portfolioGrid');
+            grid.innerHTML = modules.map((m, i) => `
+                <div class="card portfolio-card ${i === currentModuleIndex ? 'active' : ''}" 
+                     onclick="switchModule(${i})" 
+                     style="min-width: 250px; cursor: pointer; border-left: 4px solid ${m.color};">
+                    <strong>${m.id}</strong>
+                    <p style="margin:5px 0 0 0; font-size: 0.85rem; color: #94a3b8;">${m.name}</p>
+                </div>
+            `).join('');
+        }
+
+        function switchModule(index) {
+            currentModuleIndex = index;
+            document.getElementById('displayModuleName').innerText = `${modules[index].id}: ${modules[index].name}`;
+            renderPortfolio();
+            renderRoster();
+            updateStats();
+        }
+
+        function renderRoster(filter = "") {
+            const grid = document.getElementById('rosterGrid');
+            const data = rosters[currentModuleIndex].filter(s => s.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            grid.innerHTML = data.map((s, i) => {
+                // Determine if student is currently At-Risk based on rules AND override status
+                const isAtRisk = (s.manualFlag || s.attendance < 60) && !s.manualOverride;
+                
+                return `
+                <div class="student-item ${isAtRisk ? 'flagged-highlight' : ''}">
+                    <div class="student-header" onclick="toggleProfile(${i})">
+                        <span class="${isAtRisk ? 'flagged-text' : ''}">
+                            ${s.name} 
+                            ${isAtRisk ? `<span style="color:#ef4444; font-size:0.7rem; font-weight:bold;">⚠️ RISK (${s.attendance < 60 ? 'Low Att' : 'Flagged'})</span>` : ''}
+                        </span>
+                        <small style="color:#94a3b8">${s.id}</small>
+                    </div>
+                    <div id="profile-${i}" class="profile-content">
+                        <p>Attendance: <span style="color: ${s.attendance < 60 ? '#ef4444' : '#10b981'}">${s.attendance}%</span></p>
+                        <button class="btn-premium" style="width:auto; padding:5px 10px; font-size:0.7rem; background:${isAtRisk ? '#ef4444' : '#334155'}" onclick="toggleFlag(${i}, event)">
+                            ${isAtRisk ? 'Unflag / Override' : 'Flag Student'}
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function toggleRoster() { document.getElementById('rosterPanel').classList.toggle('expanded'); }
+        function toggleProfile(i) { document.getElementById(`profile-${i}`).classList.toggle('open'); }
+        
+        function toggleFlag(i, event) { 
+            event.stopPropagation(); 
+            let student = rosters[currentModuleIndex][i];
+            
+            // Logic Fix: If they are currently flagged, unflag them (apply override)
+            if ((student.manualFlag || student.attendance < 60) && !student.manualOverride) {
+                student.manualOverride = true;
+                student.manualFlag = false;
+            } 
+            // If they are currently unflagged (overridden or clear), flag them (clear override)
+            else {
+                student.manualOverride = false;
+                student.manualFlag = true;
+            }
+            
+            renderRoster(); 
+            updateStats(); 
+        }
+        
+        function updateStats() {
+            const roster = rosters[currentModuleIndex];
+            const flagged = roster.filter(s => (s.manualFlag || s.attendance < 60) && !s.manualOverride);
+            document.getElementById('flagCount').innerText = flagged.length;
+            document.getElementById('avgAtt').innerText = Math.round(roster.reduce((a, b) => a + b.attendance, 0) / roster.length) + '%';
+            document.getElementById('atRiskList').innerHTML = flagged.length > 0 ? flagged.map(s => `• ${s.name} (${s.attendance}%)`).join('<br>') : "No flags.";
+            
+            document.getElementById('bulkMessageBtn').style.display = flagged.length > 0 ? 'block' : 'none';
+        }
+
+        function bulkMessage() {
+            const roster = rosters[currentModuleIndex];
+            const flagged = roster.filter(s => (s.manualFlag || s.attendance < 60) && !s.manualOverride);
+            const count = flagged.length;
+            if(confirm(`Send automatic performance warning to all ${count} flagged students?`)) {
+                alert(`Broadcast sent to ${count} students successfully via VLE.Messaging.`);
+            }
+        }
+
+        function filterRoster() {
+            const query = document.getElementById('rosterSearch').value;
+            renderRoster(query);
+        }
+
+        function safeRemove(btn) { if(confirm("Remove this item?")) btn.parentElement.remove(); }
+
+        function handleLocalUpload(input, containerId, icon) {
+            const file = input.files[0];
+            if (file) {
+                const container = document.getElementById(containerId);
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style = "margin-bottom: 10px; padding: 12px; display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);";
+                div.innerHTML = `<span>${icon} ${file.name}</span><button class="btn-delete" onclick="safeRemove(this)">Remove</button>`;
+                container.prepend(div);
+                input.value = "";
+            }
+        }
+
+        function createNewModule() {
+            const id = prompt("New Module ID:");
+            const name = prompt("New Module Name:");
+            if(id && name) {
+                modules.push({ id, name, color: '#a78bfa' });
+                rosters.push(studentNames.map((name, i) => ({ name, id: 'W' + (1800000 + i), attendance: 100, manualFlag: false, manualOverride: false })));
+                renderPortfolio();
+            }
+        }
+
+        window.onload = () => switchModule(0);
+    </script>
+</body>
+</html>
